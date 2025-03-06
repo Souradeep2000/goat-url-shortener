@@ -134,6 +134,13 @@ body {
   backdrop-filter: blur(10px);
 }
 
+@media screen and (max-width: 600px) {
+  /* Your styles for small screens here */
+  .url-shortener-box {
+    width: 375px;
+  }
+}
+
 .url-shortener-title {
   color: #f8fafc;
   font-size: 24px;
