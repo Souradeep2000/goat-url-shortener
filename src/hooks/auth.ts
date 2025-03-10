@@ -5,14 +5,15 @@ import {
   signOut,
   onAuthStateChanged,
   User,
+  signInWithRedirect,
 } from "firebase/auth";
+import { FirebaseError } from "firebase/app";
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log("Auth state changed:", user);
       setUser(user);
     });
     return () => unsubscribe();
@@ -22,7 +23,17 @@ export const useAuth = () => {
     try {
       await signInWithPopup(auth, provider);
     } catch (error) {
-      console.error("Login Error:", error);
+      if (error instanceof FirebaseError) {
+        if (
+          error.code === "auth/popup-blocked" ||
+          error.code === "auth/operation-not-supported-in-this-environment"
+        ) {
+          console.log("Popup blocked, switching to redirect...");
+          await signInWithRedirect(auth, provider);
+        }
+      } else {
+        console.error("Unexpected Login Error:", error);
+      }
     }
   };
 

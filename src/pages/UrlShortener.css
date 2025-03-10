@@ -121,6 +121,8 @@ body {
   justify-content: center;
   align-items: center;
   height: 100vh;
+  flex-direction: column;
+
   /* background: linear-gradient(135deg, #0f172a, #1e293b); */
 }
 
@@ -137,7 +139,8 @@ body {
 @media screen and (max-width: 600px) {
   /* Your styles for small screens here */
   .url-shortener-box {
-    width: 375px;
+    width: 100%;
+    padding: 1.5rem;
   }
 }
 

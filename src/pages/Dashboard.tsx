@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./UrlShortener.css"; // Import CSS file
+import Login from "./login";
 
 export default function UrlShortener() {
   const [originalUrl, setOriginalUrl] = useState("");
@@ -41,19 +42,25 @@ export default function UrlShortener() {
 
   return (
     <div className="url-shortener-container">
+      <Login />
       <div className="url-shortener-box">
         <h2 className="url-shortener-title">URL Shortener</h2>
 
         <form onSubmit={handleSubmit}>
           <div className="form-group">
             <label>Original URL:</label>
-            <input
-              type="text"
+            <textarea
               value={originalUrl}
               onChange={(e) => setOriginalUrl(e.target.value)}
               placeholder="Enter long URL"
               className="form-input"
               required
+              rows={1}
+              style={{ overflow: "hidden", resize: "none" }}
+              onInput={(e) => {
+                e.currentTarget.style.height = "auto"; // Reset height
+                e.currentTarget.style.height = `${e.currentTarget.scrollHeight}px`;
+              }}
             />
           </div>
 
