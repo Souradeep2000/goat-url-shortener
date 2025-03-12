@@ -1,6 +1,7 @@
 import { useState } from "react";
-import "./UrlShortener.css"; // Import CSS file
+import "./UrlShortener.css";
 import Login from "./login";
+import { getAuth } from "firebase/auth";
 
 export default function UrlShortener() {
   const [originalUrl, setOriginalUrl] = useState("");
@@ -16,11 +17,24 @@ export default function UrlShortener() {
     setShortUrl("");
 
     try {
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        console.log("User is not authenticated. Going with ip.");
+      }
+
+      const token = !user ? null : await user.getIdToken();
+
       const response = await fetch(
         "https://gus-8uyl.onrender.com/api/shorturl",
+        // "http://localhost:5001/api/shorturl",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: !token ? `Unbearer` : `Bearer ${token}`,
+          },
           body: JSON.stringify({
             customAlias,
             longUrl: originalUrl,
