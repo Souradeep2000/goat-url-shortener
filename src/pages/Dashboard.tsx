@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "./UrlShortener.css";
 import Login from "./login";
-import { getAuth } from "firebase/auth";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import PaginatedDropdown from "./Dropdown";
 
 export default function UrlShortener() {
   const [originalUrl, setOriginalUrl] = useState("");
@@ -9,6 +10,23 @@ export default function UrlShortener() {
   const [shortUrl, setShortUrl] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [token, setToken] = useState<string | null>(null);
+
+  // Fetch token globally when user logs in
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      if (user) {
+        const fetchedToken = await user.getIdToken();
+        setToken(fetchedToken);
+      } else {
+        setToken(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,18 +35,18 @@ export default function UrlShortener() {
     setShortUrl("");
 
     try {
-      const auth = getAuth();
-      const user = auth.currentUser;
+      // const auth = getAuth();
+      // const user = auth.currentUser;
 
-      if (!user) {
-        console.log("User is not authenticated. Going with ip.");
-      }
+      // if (!user) {
+      //   console.log("User is not authenticated. Going with ip.");
+      // }
 
-      const token = !user ? null : await user.getIdToken();
+      // const token = !user ? null : await user.getIdToken();
 
       const response = await fetch(
-        "https://gus-8uyl.onrender.com/api/shorturl",
-        // "http://localhost:5001/api/shorturl",
+        // "https://gus-8uyl.onrender.com/api/shorturl",
+        "http://localhost:5001/api/shorturl",
         {
           method: "POST",
           headers: {
@@ -57,6 +75,7 @@ export default function UrlShortener() {
   return (
     <div className="url-shortener-container">
       <Login />
+
       <div className="url-shortener-box">
         <h2 className="url-shortener-title">URL Shortener</h2>
 
@@ -110,6 +129,8 @@ export default function UrlShortener() {
 
         {error && <p className="error-message">{error}</p>}
       </div>
+
+      <PaginatedDropdown token={token} />
     </div>
   );
 }
