@@ -45,8 +45,8 @@ export default function UrlShortener() {
       // const token = !user ? null : await user.getIdToken();
 
       const response = await fetch(
-        // "https://gus-8uyl.onrender.com/api/shorturl",
-        "http://localhost:5001/api/shorturl",
+        "https://gus-8uyl.onrender.com/api/shorturl",
+        // "http://localhost:5001/api/shorturl",
         {
           method: "POST",
           headers: {
